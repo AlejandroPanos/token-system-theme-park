@@ -227,4 +227,120 @@ contract ThemePark {
         require(success, 'ETH transfer failed');
     }
 
+
+
+    // ========= THEME PARK FOOD MANAGEMENT =========
+
+    // Events
+    event NewMeal(string, uint);
+    event RetireMeal(string);
+    event EnjoyMeal(string);
+
+    // Meal struct
+    struct Meal {
+        string name;
+        uint price;
+        bool state;
+    }
+
+    // Mapping to relate name with meal
+    mapping(string => Meal) public meals;
+
+    // Mapping to relate client with meal history at the theme park
+    mapping(address => string[]) mealHistory; 
+
+    // Create an array of meals
+    string[] listOfMeals;
+
+    // Function to create meals
+    function createMeal(string memory _name, uint _price) public OnlyOwner(msg.sender){
+
+        // Create new ride 
+        meals[_name] = Meal(_name, _price, true);
+
+        // Save ride to list
+        listOfMeals.push(_name);
+
+        // Emit event
+        emit NewMeal(_name, _price);
+    }
+
+    // Function to retire meal
+    function retireMeal(string memory _name) public OnlyOwner(msg.sender) returns(bool){
+
+        // Check the ride exists
+        bool exists = false;
+
+        for(uint i = 0; i < listOfMeals.length; i++){
+            if (keccak256(abi.encodePacked(_name)) == keccak256(abi.encodePacked(listOfMeals[i]))) {
+                exists = true;
+                break;
+            } 
+        }
+
+        // Require ride exists
+        require(exists, 'Meal does not exist yet');
+
+        // Change the state of the ride
+        meals[_name].state = false;
+
+        // Emit event
+        emit RetireMeal(_name);
+
+        // Return the value
+        return true;
+    }
+
+    // Function to see meals
+    function checkMeals() public view returns(string[] memory) {
+        
+        // Check that there are meals
+        require(listOfMeals.length > 0, 'No meals added yet');
+
+        // Return the array of rides
+        return listOfMeals;
+    }
+
+    // Function to buy a meal and pay in tokens
+    function getMeal(string memory _name) public {
+
+        // Check the meal exists
+        bool exists = false;
+
+        for(uint i = 0; i < listOfMeals.length; i++){
+            if (keccak256(abi.encodePacked(_name)) == keccak256(abi.encodePacked(listOfMeals[i]))) {
+                exists = true;
+                break;
+            } 
+        }
+
+        // Require meal exists
+        require(exists, 'Meal does not exist yet');
+
+        // Check price meal
+        uint price = meals[_name].price;
+
+        // Check status of meal
+        require(meals[_name].state == true, 'Meal is not available');
+
+        // Check person has the tokens
+        require(price < tokensLeft(), 'Not enough tokens for this meal');
+
+        // Tranfer tokens to the themepark
+        token.transferThemePark(msg.sender, address(this), price);
+
+        // Save client history
+        mealHistory[msg.sender].push(_name);
+
+        // Emit event
+        emit EnjoyMeal(_name);
+    }
+
+     // Check client history
+    function checkMealHistory() public view returns(string[] memory) {
+
+        // Return the history
+        return mealHistory[msg.sender];
+    }
+
 }
