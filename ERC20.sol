@@ -18,7 +18,7 @@ interface IERC20 {
     // Returns bool to check if transfer can be done
     function transfer(address _recipient, uint256 _amount) external returns(bool);
 
-    // Returns bool to check if client can transfer to Disney
+    // Returns bool to check if client can transfer to the theme park
     function transferThemePark(address _client, address _recepient, uint256 _amount) external returns(bool);
 
     // Returns bool value if transfer is approved or not
@@ -97,7 +97,7 @@ contract ERC20Basic is IERC20 {
         return true;
     }
 
-    // Transfer Disney
+    // Transfer theme park
     function transferThemePark(address _client, address _recipient, uint256 _amount) public override returns(bool){
         // Check we have enough tokens
         require(_amount <= balances[_client], 'Token amount is not enough');
