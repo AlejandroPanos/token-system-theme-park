@@ -15,6 +15,7 @@ contract ThemePark {
     error ThemePark__RideOutOfServide();
     error ThemePark__NotEnoughTokensForRide();
     error ThemePark__CannotReturnTokens();
+    error ThemePark__NotEnoughTokensAvailableToReturn();
 
     // ========= INITIAL DECLARATIONS =========
 
@@ -247,7 +248,9 @@ contract ThemePark {
         }
 
         // User must posses the number of tokens to return
-        require(_numTokens <= tokensLeft(), 'You do not have the tokens you wish to return');
+        if (_numTokens > tokensLeft()) {
+            revert ThemePark__NotEnoughTokensAvailableToReturn();
+        }
 
         // Client returns tokens
         token.transferThemePark(msg.sender, address(this), _numTokens);
