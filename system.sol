@@ -12,6 +12,7 @@ contract ThemePark {
     error ThemePark__NotEnoughTokensAvailable();
     error ThemePark__RideDoesNotExist();
     error ThemePark__NoRidesAdded();
+    error ThemePark__RideOutOfServide();
 
     // ========= INITIAL DECLARATIONS =========
 
@@ -201,13 +202,17 @@ contract ThemePark {
         }
 
         // Require ride exists
-        require(exists, 'Ride does not exist yet');
+        if (!exists) {
+            revert ThemePark__RideDoesNotExist();
+        }
 
         // Check price ride
         uint price = rides[_name].price;
 
         // Check status of ride
-        require(rides[_name].state == true, 'Ride is out of service');
+        if (rides[_name].state == false) {
+            revert ThemePark__RideOutOfServide();
+        }
 
         // Check person has the tokens
         require(price < tokensLeft(), 'Not enough tokens for this ride');
