@@ -7,6 +7,7 @@ contract ThemePark {
 
     // ========= CUSTOM ERRORS =========
     error ThemePark__NotTheOwner();
+    error ThemePark__CannotBuyTokens();
 
     // ========= INITIAL DECLARATIONS =========
 
@@ -68,7 +69,9 @@ contract ThemePark {
         uint price = assignPrice(_numTokens);
 
         // Check buyer has the required amount
-        require(msg.value >= price, 'Cannot perform that operation');
+        if (msg.value < price) {
+            revert ThemePark__CannotBuyTokens();
+        }
 
         // Check the remainder
         uint returnValue = msg.value - price;
