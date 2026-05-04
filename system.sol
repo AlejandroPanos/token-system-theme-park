@@ -14,6 +14,7 @@ contract ThemePark {
     error ThemePark__NoRidesAdded();
     error ThemePark__RideOutOfServide();
     error ThemePark__NotEnoughTokensForRide();
+    error ThemePark__CannotReturnTokens();
 
     // ========= INITIAL DECLARATIONS =========
 
@@ -241,7 +242,9 @@ contract ThemePark {
     function returnTokens(uint _numTokens) public payable {
 
         // Check number of tokens is greater than 0
-        require(_numTokens > 0, 'Cannot return tokens');
+        if (_numTokens == 0) {
+            revert ThemePark__CannotReturnTokens();
+        }
 
         // User must posses the number of tokens to return
         require(_numTokens <= tokensLeft(), 'You do not have the tokens you wish to return');
