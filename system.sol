@@ -10,6 +10,7 @@ contract ThemePark {
     error ThemePark__CannotBuyTokens();
     error ThemePark__TransferFailed();
     error ThemePark__NotEnoughTokensAvailable();
+    error ThemePark__RideDoesNotExist();
 
     // ========= INITIAL DECLARATIONS =========
 
@@ -159,7 +160,9 @@ contract ThemePark {
         }
 
         // Require ride exists
-        require(exists, 'Ride does not exist yet');
+        if (!exists) {
+            revert ThemePark__RideDoesNotExist();
+        }
 
         // Change the state of the ride
         rides[_name].state = false;
