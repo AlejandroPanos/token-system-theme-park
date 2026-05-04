@@ -5,6 +5,9 @@ import {ERC20Basic} from './ERC20.sol';
 
 contract ThemePark {
 
+    // ========= CUSTOM ERRORS =========
+    error ThemePark__NotTheOwner();
+
     // ========= INITIAL DECLARATIONS =========
 
     // Instance to token contract
@@ -33,7 +36,9 @@ contract ThemePark {
     // ========= MODIFIERS =========
 
     modifier OnlyOwner(address _address) {
-        require(_address == owner, 'Cannot execute this function');
+        if (_address != owner) {
+            revert ThemePark__NotTheOwner();
+        }
         _;
     }
 
