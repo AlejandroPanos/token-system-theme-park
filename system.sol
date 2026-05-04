@@ -11,6 +11,7 @@ contract ThemePark {
     error ThemePark__TransferFailed();
     error ThemePark__NotEnoughTokensAvailable();
     error ThemePark__RideDoesNotExist();
+    error ThemePark__NoRidesAdded();
 
     // ========= INITIAL DECLARATIONS =========
 
@@ -178,7 +179,9 @@ contract ThemePark {
     function checkRides() public view returns(string[] memory) {
         
         // Check that there are rides
-        require(listOfRides.length > 0, 'No rides added yet');
+        if (listOfRides.length == 0) {
+            revert ThemePark__NoRidesAdded();
+        }
 
         // Return the array of rides
         return listOfRides;
