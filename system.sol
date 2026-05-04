@@ -9,6 +9,7 @@ contract ThemePark {
     error ThemePark__NotTheOwner();
     error ThemePark__CannotBuyTokens();
     error ThemePark__TransferFailed();
+    error ThemePark__NotEnoughTokensAvailable();
 
     // ========= INITIAL DECLARATIONS =========
 
@@ -85,7 +86,9 @@ contract ThemePark {
 
         // Check ERC20 contract balance
         uint balance = balanceOf();
-        require(_numTokens <= balance, 'Not enough tokens available');
+        if (_numTokens > balance) {
+            revert ThemePark__NotEnoughTokensAvailable();
+        }
 
         // Send tokens to buyer
         token.transfer(msg.sender, _numTokens);
