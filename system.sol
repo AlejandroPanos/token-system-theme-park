@@ -13,6 +13,7 @@ contract ThemePark {
     error ThemePark__RideDoesNotExist();
     error ThemePark__NoRidesAdded();
     error ThemePark__RideOutOfServide();
+    error ThemePark__NotEnoughTokensForRide();
 
     // ========= INITIAL DECLARATIONS =========
 
@@ -215,7 +216,9 @@ contract ThemePark {
         }
 
         // Check person has the tokens
-        require(price < tokensLeft(), 'Not enough tokens for this ride');
+        if (price > tokensLeft()) {
+            revert ThemePark__NotEnoughTokensForRide();
+        }
 
         // Tranfer tokens to the theme park
         token.transferThemePark(msg.sender, address(this), price);
