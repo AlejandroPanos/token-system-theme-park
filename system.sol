@@ -8,6 +8,7 @@ contract ThemePark {
     // ========= CUSTOM ERRORS =========
     error ThemePark__NotTheOwner();
     error ThemePark__CannotBuyTokens();
+    error ThemePark__TransferFailed();
 
     // ========= INITIAL DECLARATIONS =========
 
@@ -78,7 +79,9 @@ contract ThemePark {
 
         // Theme park returns the remainder – Transfer is deprecated (must use call{value: <amount>})
         (bool success, ) = payable(msg.sender).call{value: returnValue}('');
-        require(success, 'ETH transfer failed');
+        if (!success) {
+            revert ThemePark__TransferFailed();
+        }
 
         // Check ERC20 contract balance
         uint balance = balanceOf();
