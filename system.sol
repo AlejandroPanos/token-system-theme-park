@@ -19,6 +19,7 @@ contract ThemePark {
     error ThemePark__MealDoesNotExist();
     error ThemePark__NoMealsAdded();
     error ThemePark__MealNotAvailable();
+    error ThemePark__NotEnoughTokensForMeal();
 
     // ========= INITIAL DECLARATIONS =========
 
@@ -369,10 +370,11 @@ contract ThemePark {
         if (meals[_name].state != true) {
             revert ThemePark__MealNotAvailable();
         }
-        require(meals[_name].state == true, 'Meal is not available');
 
         // Check person has the tokens
-        require(price < tokensLeft(), 'Not enough tokens for this meal');
+        if (price > tokensLeft()) {
+            revert ThemePark__NotEnoughTokensForMeal();
+        }
 
         // Tranfer tokens to the themepark
         token.transferThemePark(msg.sender, address(this), price);
