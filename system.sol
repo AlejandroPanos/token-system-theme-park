@@ -338,7 +338,6 @@ contract ThemePark {
         if (listOfMeals.length == 0){
             revert ThemePark__NoMealsAdded();
         }
-        require(listOfMeals.length > 0, 'No meals added yet');
 
         // Return the array of rides
         return listOfMeals;
@@ -358,7 +357,9 @@ contract ThemePark {
         }
 
         // Require meal exists
-        require(exists, 'Meal does not exist yet');
+        if (!exists) {
+            revert ThemePark__MealDoesNotExist();
+        }
 
         // Check price meal
         uint price = meals[_name].price;
