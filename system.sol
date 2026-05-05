@@ -18,6 +18,7 @@ contract ThemePark {
     error ThemePark__NotEnoughTokensAvailableToReturn();
     error ThemePark__MealDoesNotExist();
     error ThemePark__NoMealsAdded();
+    error ThemePark__MealNotAvailable();
 
     // ========= INITIAL DECLARATIONS =========
 
@@ -365,6 +366,9 @@ contract ThemePark {
         uint price = meals[_name].price;
 
         // Check status of meal
+        if (meals[_name].state != true) {
+            revert ThemePark__MealNotAvailable();
+        }
         require(meals[_name].state == true, 'Meal is not available');
 
         // Check person has the tokens
