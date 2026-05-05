@@ -17,6 +17,7 @@ contract ThemePark {
     error ThemePark__CannotReturnTokens();
     error ThemePark__NotEnoughTokensAvailableToReturn();
     error ThemePark__MealDoesNotExist();
+    error ThemePark__NoMealsAdded();
 
     // ========= INITIAL DECLARATIONS =========
 
@@ -334,6 +335,9 @@ contract ThemePark {
     function checkMeals() public view returns(string[] memory) {
         
         // Check that there are meals
+        if (listOfMeals.length == 0){
+            revert ThemePark__NoMealsAdded();
+        }
         require(listOfMeals.length > 0, 'No meals added yet');
 
         // Return the array of rides
