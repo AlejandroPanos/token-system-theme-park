@@ -16,6 +16,7 @@ contract ThemePark {
     error ThemePark__NotEnoughTokensForRide();
     error ThemePark__CannotReturnTokens();
     error ThemePark__NotEnoughTokensAvailableToReturn();
+    error ThemePark__MealDoesNotExist();
 
     // ========= INITIAL DECLARATIONS =========
 
@@ -315,7 +316,9 @@ contract ThemePark {
         }
 
         // Require ride exists
-        require(exists, 'Meal does not exist yet');
+        if (!exists) {
+            revert ThemePark__MealDoesNotExist();
+        }
 
         // Change the state of the ride
         meals[_name].state = false;
