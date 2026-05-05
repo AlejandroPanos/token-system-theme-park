@@ -258,7 +258,9 @@ contract ThemePark {
         // Theme park returns ether to client
         uint returnValue = assignPrice(_numTokens);
         (bool success, ) = payable(msg.sender).call{value: returnValue}('');
-        require(success, 'ETH transfer failed');
+        if (!success) {
+            revert ThemePark__TransferFailed();
+        }
     }
 
 
