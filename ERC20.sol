@@ -39,6 +39,9 @@ interface IERC20 {
 // ERC20 contract
 contract ERC20Basic is IERC20 {
 
+    // Custom errors
+    error ERC20Basic__AmountNotEnough();
+
     string public constant name = 'ERC20AZ';
     string public constant symbol = 'ERC';
     uint8 public constant decimals = 2;
@@ -82,7 +85,9 @@ contract ERC20Basic is IERC20 {
     // Transfer
     function transfer(address _recipient, uint256 _amount) public override returns(bool){
         // Check we have enough tokens
-        require(_amount <= balances[msg.sender], 'Token amount is not enough');
+        if (_amount > balances[msg.sender]) {
+            revert ERC20Basic__AmountNotEnough();
+        }
 
         // Get rid of token amount in sender account
         balances[msg.sender] = balances[msg.sender].sub(_amount);
