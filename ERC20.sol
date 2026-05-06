@@ -41,6 +41,7 @@ contract ERC20Basic is IERC20 {
 
     // Custom errors
     error ERC20Basic__AmountNotEnough();
+    error ERC20Basic__TokenAmountNotEnough();
 
     string public constant name = 'ERC20AZ';
     string public constant symbol = 'ERC';
@@ -105,7 +106,9 @@ contract ERC20Basic is IERC20 {
     // Transfer theme park
     function transferThemePark(address _client, address _recipient, uint256 _amount) public override returns(bool){
         // Check we have enough tokens
-        require(_amount <= balances[_client], 'Token amount is not enough');
+        if (_amount > balances[_client]) {
+            revert ERC20Basic__TokenAmountNotEnough();
+        }
 
         // Get rid of token amount in sender account
         balances[_client] = balances[_client].sub(_amount);
