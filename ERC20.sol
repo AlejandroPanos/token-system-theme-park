@@ -43,6 +43,7 @@ contract ERC20Basic is IERC20 {
     error ERC20Basic__AmountNotEnough();
     error ERC20Basic__TokenAmountNotEnough();
     error ERC20Basic__NotEnoughTokensToSend();
+    error ERC20Basic__TransferNotAllowed();
 
     string public constant name = 'ERC20AZ';
     string public constant symbol = 'ERC';
@@ -142,7 +143,10 @@ contract ERC20Basic is IERC20 {
         if (_amount > balances[_owner]) {
             revert ERC20Basic__NotEnoughTokensToSend();
         }
-        require(_amount <= allowed[_owner][msg.sender], 'You are not allowed to transfer that amount');
+
+        if (_amount > allowed[_owner][msg.sender]) {
+            revert ERC20Basic__TransferNotAllowed();
+        }
 
         // Create the transfers
         balances[_owner] = balances[_owner].sub(_amount);
